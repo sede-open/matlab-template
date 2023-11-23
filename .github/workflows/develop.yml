@@ -15,24 +15,11 @@ jobs:
     runs-on: shellai-runner-private-tst
     steps:
       - uses: actions/checkout@v2
-      
-      - run: |
-            curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-            curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
-            sudo apt-get update
-            sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
-        name: Add ODBC Drivers for SQL Server
-        
-      - run: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=TESTpassword1" -p 1433:1433 --name testSQL -d mcr.microsoft.com/mssql/server:2019-latest
-        name : Setup MS SQL
 
       - name: Setup MATLAB
         uses: matlab-actions/setup-matlab@v1.2.0
         with:
             release: R2021a
-
-      - run: docker exec testSQL /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P TESTpassword1 -Q "CREATE DATABASE testSQL"
-        name: Create Database
                 
       - name: Run MATLAB Tests
         uses: matlab-actions/run-tests@v1.3.0
