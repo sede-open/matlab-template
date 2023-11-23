@@ -5,10 +5,6 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
-env:
-  MATHWORKS_SKIP_ACTIVATION: true
-  MATHWORKS_ACCOUNT: ${{ secrets.MATHWORKS_ACCOUNT }}
-  MATHWORKS_TOKEN: ${{ secrets.MATHWORKS_TOKEN }}
 
 jobs:
   test-and-build:
@@ -18,31 +14,9 @@ jobs:
 
       - name: Setup MATLAB
         uses: matlab-actions/setup-matlab@v1.2.0
-        with:
-            release: R2021a
                 
       - name: Run MATLAB Tests
         uses: matlab-actions/run-tests@v1.3.0
-        with:
-            test-results-junit: test-results/results.xml
-            code-coverage-cobertura: code-coverage/coverage.xml
-        env:
-           SQL_DB_USER: sa
-           SQL_DB_PWD: TESTpassword1
-           SQL_DB_SERVER: localhost
-           SQL_DB_DATABASE: testSQL
-           CURRENT_ENVIRONMENT: dev
             
       - name: Build for MPS
         uses: matlab-actions/run-command@v1.1.0
-        if: ${{ github.ref == 'refs/heads/develop' }}
-        with:
-            command: compile
-        env:
-           SQL_DB_USER: ${{ secrets.TEST_DB_USER }}
-           SQL_DB_PWD: ${{ secrets.TEST_DB_PWD }}
-           SQL_DB_SERVER: ${{ secrets.TEST_DB_SERVER }}
-           SQL_DB_DATABASE: ${{ secrets.TEST_DB_DATABASE }}
-           BASIC_AUTH_USER: ${{ secrets.TEST_AUTH_USER }}
-           BASIC_AUTH_PWD: ${{ secrets.TEST_AUTH_PWD }}
-           CURRENT_ENVIRONMENT: dev
